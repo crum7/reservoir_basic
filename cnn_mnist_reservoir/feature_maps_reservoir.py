@@ -57,6 +57,7 @@ def objective(trial):
     leaking_rate = trial.suggest_float('leaking_rate', 0, 1)
     sparsity = trial.suggest_float('sparsity', 0, 1)
 
+
     esn = ESNClassifier(
         input_scaling=input_scaling,
         hidden_layer_size=hidden_layer_size,
@@ -66,6 +67,22 @@ def objective(trial):
         reservoir_activation='tanh',
         decision_strategy='vote',
     )
+
+    # テストデータに対する予測
+    test_y_pred = esn.predict(test_X)
+    # トレインデータに対する予測
+    train_y_pred = esn.predict(train_X)
+    # 評価
+    test_accuracy = accuracy_score(test_Y, test_y_pred)
+    train_accuracy = accuracy_score(train_Y, train_y_pred)
+
+    test_f1 = f1_score(test_Y, test_y_pred, average='weighted')
+    train_f1 = f1_score(train_Y, train_y_pred, average='weighted')
+
+    print('Test Accuracy:', test_accuracy)
+    print('Train Accuracy:', train_accuracy)
+    print('Test F1 Score (weighted):', test_f1)
+    print('Train F1 Score (weighted):', train_f1)
 
     return cross_val_score(esn, train_X, train_Y, n_jobs=-1, cv=3).mean()
 
