@@ -68,6 +68,10 @@ def objective(trial):
         decision_strategy='vote',
     )
 
+    # モデルのフィッティング
+    esn.fit(train_X, train_Y)
+
+
     # テストデータに対する予測
     test_y_pred = esn.predict(test_X)
     # トレインデータに対する予測
